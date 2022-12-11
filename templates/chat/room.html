@@ -7,11 +7,11 @@
             <div class="col-12 col-md-8">
                 <div class="mb-2">
                     <label for="chat-log">Комната: #{{ room_name }}</label>
-		    <textarea class="form-control" id="chat-log" readonly>
-		    {% for message in messages %}
-		    <p>{{ message.user }}: {{ message.content }}</p>
-		    {% endfor %}
-		    </textarea>
+		    		<textarea class="form-control" id="chat-log" readonly>
+			    		{% for message in messages %}
+		    				<p>{{ message.user }}: {{ message.content }}</p>
+		    			{% endfor %}
+		    		</textarea>
                 </div>
                 <div class="input-group">
                     <input type="text" class="form-control" id="chat-message-input" placeholder="Введите сообщение">
