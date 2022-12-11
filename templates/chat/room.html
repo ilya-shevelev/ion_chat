@@ -1,18 +1,18 @@
 {% extends 'chat/base.html' %}
 {% block title %}Чат{% endblock title %}
 {% block content %}
-    <div class="container mt-3 p-5">
-        <h2>Чат</h2>
-        <div class="row">
-            <div class="col-12 col-md-8">
-                <div class="mb-2">
-                    <label for="chat-log">Комната: #{{ room_name }}</label>
-		    		<textarea class="form-control" id="chat-log" readonly>
-			    		{% for message in messages %}
-		    				{{ message.user }}: {{ message.content }}
-		    			{% endfor %}
-		    		</textarea>
-                </div>
+	<div class="container mt-3 p-5">
+		<h2>Чат</h2>
+		<div class="row">
+			<div class="col-12 col-md-8">
+				<div class="mb-2">
+					<label for="chat-log">Комната: #{{ room_name }}</label>
+					<textarea class="form-control" id="chat-log" readonly>
+						{% for message in messages %}
+						{{ message.user }}: {{ message.content }}
+						{% endfor %}
+					</textarea>
+				</div>
                 <div class="input-group">
                     <input type="text" class="form-control" id="chat-message-input" placeholder="Введите сообщение">
                     <div class="input-group-append">
