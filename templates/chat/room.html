@@ -9,7 +9,7 @@
 					<label for="chat-log">Комната: #{{ room_name }}</label>
 					<textarea class="form-control" id="chat-log" readonly>
 						{% for message in messages %}
-						<p>{{ message.user }}: {{ message.content }}</p>
+						{{ message.user }}: {{ message.content }}&#13;&#10;
 						{% endfor %}
 					</textarea>
 				</div>
