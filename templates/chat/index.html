@@ -1,0 +1,48 @@
+{% extends 'chat/base.html' %}
+{% block title %}Чат{% endblock title %}
+<style>
+    #roomSelect {
+    	height: 300px;
+    }
+</style>
+{% block content %}
+    <div class="container mt-3 p-5">
+        <h2>Чат</h2>
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="mb-2">
+		    <label for="room-name-input">Введите название комнаты чтобы подключиться к ней:</label>
+    		    <input id="room-name-input" type="text" class="form-control" placeholder="Название комнаты">
+		    <small id="roomInputHelp" class="form-text text-muted">Если комната еще не существует, она будет создана.</small>
+		</div>
+    		<button id="room-name-submit" type="button" class="btn btn-success">Подключиться</button>
+	    </div>
+	    <div class="col-12 col-md-4">
+                <label for="roomSelect">Активные группы</label>
+                <select multiple class="form-control" id="roomSelect">
+                    {% for room in rooms %}
+                        <option>{{ room }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+	</div>
+    </div>
+
+    <script>
+        document.querySelector('#room-name-input').focus();
+        document.querySelector('#room-name-input').onkeyup = function(e) {
+            if (e.keyCode === 13) {  // enter, return
+                document.querySelector('#room-name-submit').click();
+            }
+        };
+
+        document.querySelector('#room-name-submit').onclick = function(e) {
+            var roomName = document.querySelector('#room-name-input').value;
+            window.location.pathname = '/chat/' + roomName + '/';
+        };
+	document.querySelector("#roomSelect").onchange = function () {
+    	    let roomName = document.querySelector("#roomSelect").value.split(" (")[0];
+    	    window.location.pathname = "/chat/" + roomName + "/";
+	};
+    </script>
+{% endblock content %}

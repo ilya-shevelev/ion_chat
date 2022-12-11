@@ -1,0 +1,121 @@
+{% extends 'chat/base.html' %}
+{% block title %}Чат{% endblock title %}
+{% block content %}
+    <div class="container mt-3 p-5">
+        <h2>Чат</h2>
+        <div class="row">
+            <div class="col-12 col-md-8">
+                <div class="mb-2">
+                    <label for="chat-log">Комната: #{{ room_name }}</label>
+		    <textarea class="form-control" id="chat-log" readonly>
+		    {% for message in messages %}
+		    <p>{{ message.user }}: {{ message.content }}</p>
+		    {% endfor %}
+		    </textarea>
+                </div>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="chat-message-input" placeholder="Введите сообщение">
+                    <div class="input-group-append">
+                        <button class="btn btn-success" id="chat-message-submit" type="button">Отправить</button>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 col-md-4">
+                <label for="online-users-selector">Участники</label>
+                <select multiple class="form-control" id="online-users-selector">
+                </select>
+                <small class="form-text text-muted">Нажмите на имя участника чтобы отправить ему личное сообщение</small>
+            </div>
+        </div>
+        {{ room_name|json_script:"room-name" }}
+    </div>
+    <script>
+        const roomName = JSON.parse(document.getElementById('room-name').textContent);
+        let chatLog = document.querySelector("#chat-log");
+        let chatMessageInput = document.querySelector("#chat-message-input");
+        let chatMessageSend = document.querySelector("#chat-message-submit");
+        let onlineUsersSelector = document.querySelector("#online-users-selector");
+
+	function onlineUsersSelectorAdd(value) {
+    	    if (document.querySelector("option[value='" + value + "']")) return;
+    	    let newOption = document.createElement("option");
+    	    newOption.value = value;
+    	    newOption.innerHTML = value;
+    	    onlineUsersSelector.appendChild(newOption);
+	};
+
+	function onlineUsersSelectorRemove(value) {
+    	    let oldOption = document.querySelector("option[value='" + value + "']");
+    	    if (oldOption !== null) oldOption.remove();
+	};
+
+	onlineUsersSelector.onchange = function () {
+    	    chatMessageInput.value = "/pm " + onlineUsersSelector.value + " ";
+    	    onlineUsersSelector.value = null;
+    	    chatMessageInput.focus();
+	};
+
+        const chatSocket = new WebSocket(
+            'wss://'
+            + window.location.host
+            + ':8001'
+            + '/ws/chat/'
+            + roomName
+            + '/'
+        );
+
+        chatSocket.onmessage = function(e) {
+       	    const data = JSON.parse(e.data);
+
+	    switch (data.type) {
+            	case "chat_message":
+                    chatLog.value += data.user + ": " + data.message + "\n";
+                    break;
+            	case "user_list":
+                    for (let i = 0; i < data.users.length; i++) {
+                        onlineUsersSelectorAdd(data.users[i]);
+                    }
+                    break;
+            	case "user_join":
+                    chatLog.value += data.user + " присоединился к чату.\n";
+                    onlineUsersSelectorAdd(data.user);
+                    break;
+            	case "user_leave":
+                    chatLog.value += data.user + " покинул чат.\n";
+                    onlineUsersSelectorRemove(data.user);
+                    break;
+            	case "private_message":
+                    chatLog.value += "Личное сообщение от " + data.user + ": " + data.message + "\n";
+                    break;
+            	case "private_message_delivered":
+                    chatLog.value += "Личное сообщение к " + data.target + ": " + data.message + "\n";
+                    break;
+            	default:
+                    console.error("Unknown message type!");
+                    break;
+            };
+	
+	    chatLog.scrollTop = chatLog.scrollHeight;
+        };
+
+        chatSocket.onclose = function(e) {
+            console.log("WebSocket connection closed unexpectedly. Trying to reconnect in 2s...");
+        };
+
+        document.querySelector('#chat-message-input').focus();
+        document.querySelector('#chat-message-input').onkeyup = function(e) {
+	    if (e.keyCode === 13) {
+                document.querySelector('#chat-message-submit').click();
+            }
+        };
+
+        document.querySelector('#chat-message-submit').onclick = function(e) {
+            const messageInputDom = document.querySelector('#chat-message-input');
+            const message = messageInputDom.value;
+            chatSocket.send(JSON.stringify({
+                'message': message
+            }));
+            messageInputDom.value = '';
+        };
+    </script>
+{% endblock content %}

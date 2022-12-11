@@ -144,6 +144,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
+BASE_URL = 'https://ilya-shevelev.ru/'
+
 # DJANGO-ALLAUTH
 
 AUTHENTICATION_BACKENDS = [
@@ -153,6 +155,19 @@ AUTHENTICATION_BACKENDS = [
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
 SITE_ID = 1
+
+LOGIN_REDIRECT_URL = "chat-index"
+LOGOUT_REDIRECT_URL = "chat-index"
+ACCOUNT_LOGOUT_REDIRECT = "chat-index"
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+ACCOUNT_SESSION_REMEMBER = True  # "Запомнить меня"
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = (
+    False  # "Не вводить пароль при регистрации дважды"
+)
+ACCOUNT_USERNAME_REQUIRED = False  # Имя пользователя не обязательно
+ACCOUNT_AUTHENTICATION_METHOD = "email"  # Аутентификация по email
+ACCOUNT_EMAIL_REQUIRED = True  # Email обязательно
+ACCOUNT_UNIQUE_EMAIL = True  # Email уникальный
 
 # CHANNELS
 
