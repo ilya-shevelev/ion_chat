@@ -1,0 +1,50 @@
+version: "3.9"
+
+services:
+  web:
+    container_name: chat
+    build:
+      context: .
+      dockerfile: python.Dockerfile
+    restart: always
+    ports:
+      - '8001:8001'
+    env_file:
+      - .env.prod
+    command: /python-entrypoint.sh
+    volumes:
+      - static:/app/static
+      - media:/app/media
+    depends_on:
+      - redis
+      - nginx
+
+  redis:
+    container_name: redis
+    restart: always
+    image: redis:5
+    env_file:
+      - .env.prod
+    expose:
+      - 6379
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 1s
+      timeout: 3s
+      retries: 30
+
+  nginx:
+    container_name: nginx
+    build:
+      context: .
+      dockerfile: nginx.Dockerfile
+    restart: always
+    ports:
+      - '80:80'
+    volumes:
+      - static:/app/static
+      - media:/app/media
+
+volumes:
+  media:
+  static:
