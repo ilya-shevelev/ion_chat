@@ -21,12 +21,13 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-q8%uo*#ouo*0x2zz8!8%z&mvmb^)u6wh92bz&!&jlkl#%m61i*'
+SECRET_KEY = os.environ['DJANGO_SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DJANGO_ENV = os.environ["DJANGO_ENV"]
+DEBUG = DJANGO_ENV != "prod"
 
-ALLOWED_HOSTS = ['194.67.97.123', 'ilya-shevelev.ru', 'www.ilya-shevelev.ru']
+ALLOWED_HOSTS = os.environ['DJANGO_ALLOWED_HOSTS'].split(",")
 
 
 # Application definition
@@ -79,20 +80,16 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'django_project.wsgi.application'
-ASGI_APPLICATION = 'django_project.wsgi.application'
+ASGI_APPLICATION = 'django_project.asgi.application'
 
 
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'ion_db',
-        'USER': 'django',
-        'PASSWORD': 'password',
-        'HOST': 'localhost',
-        'PORT': '',
+    "default": {
+        "ENGINE": "django.db.backends.sqlite3",
+        "NAME": BASE_DIR / "db.sqlite3",
     }
 }
 
@@ -144,7 +141,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "accounts.CustomUser"
 
-BASE_URL = 'https://ilya-shevelev.ru/'
+BASE_URL = os.environ["DJANGO_BASE_URL"]
 
 # DJANGO-ALLAUTH
 
@@ -175,7 +172,7 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [("127.0.0.1", 6379)],
+            "hosts": [(os.environ["REDIS_HOST"], os.environ["REDIS_PORT"])],
         },
     },
 }

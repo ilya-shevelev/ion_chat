@@ -14,4 +14,5 @@ def index_view(request):
 
 @login_required(login_url='chat-index')
 def room_view(request, room_name):
+    Room.objects.get_or_create(name=room_name)
     return render(request, "chat/room.html", {"room_name": room_name, 'messages': Message.objects.filter(room__name=room_name)})

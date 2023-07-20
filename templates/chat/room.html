@@ -36,28 +36,28 @@
         let chatMessageSend = document.querySelector("#chat-message-submit");
         let onlineUsersSelector = document.querySelector("#online-users-selector");
 
-	function onlineUsersSelectorAdd(value) {
-    	    if (document.querySelector("option[value='" + value + "']")) return;
-    	    let newOption = document.createElement("option");
-    	    newOption.value = value;
-    	    newOption.innerHTML = value;
-    	    onlineUsersSelector.appendChild(newOption);
-	};
+        function onlineUsersSelectorAdd(value) {
+            if (document.querySelector("option[value='" + value + "']")) return;
+            let newOption = document.createElement("option");
+            newOption.value = value;
+            newOption.innerHTML = value;
+            onlineUsersSelector.appendChild(newOption);
+        };
 
-	function onlineUsersSelectorRemove(value) {
-    	    let oldOption = document.querySelector("option[value='" + value + "']");
-    	    if (oldOption !== null) oldOption.remove();
-	};
+        function onlineUsersSelectorRemove(value) {
+            let oldOption = document.querySelector("option[value='" + value + "']");
+            if (oldOption !== null) oldOption.remove();
+        };
 
-	onlineUsersSelector.onchange = function () {
-    	    chatMessageInput.value = "/pm " + onlineUsersSelector.value + " ";
-    	    onlineUsersSelector.value = null;
-    	    chatMessageInput.focus();
-	};
+        onlineUsersSelector.onchange = function () {
+            chatMessageInput.value = "/pm " + onlineUsersSelector.value + " ";
+            onlineUsersSelector.value = null;
+            chatMessageInput.focus();
+        };
 
         const chatSocket = new WebSocket(
-            'wss://'
-            + window.location.host
+            'ws://'
+            + window.location.hostname
             + ':8001'
             + '/ws/chat/'
             + roomName
@@ -67,7 +67,7 @@
         chatSocket.onmessage = function(e) {
        	    const data = JSON.parse(e.data);
 
-	    switch (data.type) {
+	        switch (data.type) {
             	case "chat_message":
                     chatLog.value += data.user + ": " + data.message + "\n";
                     break;
@@ -95,7 +95,7 @@
                     break;
             };
 	
-	    chatLog.scrollTop = chatLog.scrollHeight;
+	        chatLog.scrollTop = chatLog.scrollHeight;
         };
 
         chatSocket.onclose = function(e) {
