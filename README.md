@@ -1,5 +1,5 @@
 # IONChat
-[*Try on my site*](http://chat.shevelev.site/chat/)
+[*Try on my site*](http://chat.shevelev.site:82/chat/)
 ### A simple text chat working on [WebSockets](https://developer.mozilla.org/ru/docs/Web/API/WebSockets_API) with the possibility of communication in a group form and in personal dialogues.
 
 ## Technology stack:

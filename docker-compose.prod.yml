@@ -40,7 +40,7 @@ services:
       dockerfile: nginx.Dockerfile
     restart: always
     ports:
-      - '80:80'
+      - '82:80'
     volumes:
       - static:/app/static
       - media:/app/media
